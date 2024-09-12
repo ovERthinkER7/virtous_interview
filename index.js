@@ -47,7 +47,7 @@ app.post("/users/calculateRanks", async (req, res) => {
             if (index > 0 && u.TotalMarks < user[index - 1].TotalMarks) {
                 rank = index + 1;
             }
-            u._Rank = rank;
+            u.Rank = rank;
         });
         await Promise.all(user.map((u) => u.save()));
         res.status(200).json({ message: "Ranks updated successfully" });

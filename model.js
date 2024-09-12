@@ -29,27 +29,28 @@ const user = new Schema({
         max: 20,
         min: 0,
     },
+    TotalMarks: {
+        type: Number,
+        default: function () {
+            return (
+                this.Round1Marks +
+                this.Round2Marks +
+                this.Round3Marks +
+                this.TechnicalRoundMarks
+            );
+        },
+    },
+    Result: {
+        type: String,
+        default: function () {
+            return this.TotalMarks < 35 ? "Rejected" : "Selected";
+        },
+    },
+    Rank: {
+        type: Number,
+        default: null,
+    },
 });
-
-user.virtual("TotalMarks").get(function () {
-    return (
-        this.Round1Marks +
-        this.Round2Marks +
-        this.Round3Marks +
-        this.TechnicalRoundMarks
-    );
-});
-
-user.virtual("result").get(function () {
-    return this.TotalMarks < 35 ? "Rejected" : "Selected";
-});
-
-user.virtual("Rank").get(function () {
-    return this._Rank;
-});
-
-user.set("toJSON", { virtuals: true });
-user.set("toObject", { virtuals: true });
 
 user.statics.calculateRanks = async function () {
     const users = await this.find().sort({ TotalMarks: -1 }).exec();
