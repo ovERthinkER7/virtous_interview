@@ -1,5 +1,6 @@
 const { Schema, Model, default: mongoose } = require("mongoose");
-
+const roundmax = 10;
+const trroundmax = 20;
 const user = new Schema({
     StudentName: {
         type: String,
@@ -7,26 +8,26 @@ const user = new Schema({
     },
     CollegeName: {
         type: String,
-        maxlength: 30,
+        maxlength: 50,
     },
     Round1Marks: {
         type: Number,
-        max: 10,
+        max: roundmax,
         min: 0,
     },
     Round2Marks: {
         type: Number,
-        max: 10,
+        max: roundmax,
         min: 0,
     },
     Round3Marks: {
         type: Number,
-        max: 10,
+        max: roundmax,
         min: 0,
     },
     TechnicalRoundMarks: {
         type: Number,
-        max: 20,
+        max: trroundmax,
         min: 0,
     },
     TotalMarks: {
@@ -43,7 +44,13 @@ const user = new Schema({
     Result: {
         type: String,
         default: function () {
-            return this.TotalMarks < 35 ? "Rejected" : "Selected";
+            return this.TotalMarks >= 35 &&
+                this.Round1Marks >= roundmax * 0.7 &&
+                this.Round2Marks >= roundmax * 0.7 &&
+                this.Round3Marks >= roundmax * 0.7 &&
+                this.TechnicalRoundMarks >= trroundmax * 0.7
+                ? "Selected"
+                : "Rejected";
         },
     },
     Rank: {
